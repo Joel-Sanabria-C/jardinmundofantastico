@@ -4,14 +4,14 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Instagram, Facebook } from "lucide-react";
+import Image from "next/image";
 
 const NAV_LINKS = [
   { label: "Inicio", href: "/" },
   { label: "Nosotros", href: "/nosotros" },
   { label: "Servicios", href: "/#servicios" },
   { label: "Galería", href: "/#galeria" },
-  { label: "Metodología", href: "/#metodologia" },
-  { label: "Contacto", href: "/#contacto" },
+  { label: "Metodología", href: "/#metodologia" }
 ];
 
 export default function Navbar() {
@@ -54,12 +54,18 @@ export default function Navbar() {
             className="flex items-center gap-2.5 group flex-shrink-0"
           >
             <motion.div
-              className="w-11 h-11 rounded-full bg-brand-yellow flex items-center
-                         justify-center text-2xl shadow-md"
+              className="w-11 h-11 rounded-full overflow-hidden shadow-md flex-shrink-0"
               whileHover={{ scale: 1.1, rotate: 10 }}
               whileTap={{ scale: 0.95 }}
             >
-              🌟
+              <Image
+                src="/logo_jardin.svg"
+                alt="Logo Mundo Fantástico"
+                width={48}
+                height={48}
+                className="w-full h-full object-cover"
+                priority
+              />
             </motion.div>
             <span className="font-display text-lg md:text-xl text-brand-blue leading-none">
               Mundo Fantástico

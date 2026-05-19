@@ -7,10 +7,10 @@ import { createClient } from '@/lib/supabase/client'
 const INIT = { nombre_nino:'', edad_nino:'', nombre_acudiente:'', telefono:'', correo:'', nivel_interes:'', mensaje:'' }
 const NIVELES = ['Párvulos (1°)','Transición (2°)','Transición (3°)','Transición (4°)','Transición (5°)']
 const INFO = [
-  { icon:<MapPin size={18}/>,       label:'Dirección',  value:'Calle 142A #14J0-15, Ciudadela Cafam II Superlote 6', color:'#D32F2F' },
-  { icon:<Phone size={18}/>,        label:'Teléfono',   value:'[Número de contacto]',  color:'#FFD600' },
-  { icon:<MessageCircle size={18}/>, label:'WhatsApp',  value:'[Número de WhatsApp]',  color:'#25D366' },
-  { icon:<Mail size={18}/>,         label:'Email',      value:'[correo@jardin.com]',    color:'#2196F3' },
+  { icon:<MapPin size={18}/>,       label:'Dirección',  value:'Calle 142A #141D - 15  Ciudadela Cafam II Superlote 6 Salón comunal', color:'#D32F2F' },
+  { icon:<Phone size={18}/>,        label:'Teléfono',   value:'+573203017208',  color:'#FFD600' },
+  { icon:<MessageCircle size={18}/>, label:'WhatsApp',  value:'+573203017208',  color:'#25D366' },
+  { icon:<Mail size={18}/>,         label:'Email',      value:'jardininfantil@gmail.com',    color:'#2196F3' },
 ]
 
 export default function Contacto() {
@@ -111,15 +111,7 @@ export default function Contacto() {
                   </motion.div>
                 ))}
               </div>
-              <div className="flex gap-2 mt-5">
-                {[{label:'Instagram',emoji:'📸',cls:'bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888]'},
-                  {label:'Facebook', emoji:'👍', cls:'bg-[#1877F2]'},
-                  {label:'WhatsApp', emoji:'💬', cls:'bg-[#25D366]'}].map(s => (
-                  <motion.a key={s.label} href="#" className={`${s.cls} text-white text-xs rounded-xl px-3 py-2 font-body font-bold flex items-center gap-1`} whileHover={{ scale:1.05, y:-2 }}>
-                    <span>{s.emoji}</span><span>{s.label}</span>
-                  </motion.a>
-                ))}
-              </div>
+              
             </div>
             <div className="bg-white/8 border border-white/15 rounded-3xl overflow-hidden">
               <div className="h-36 bg-gradient-to-br from-brand-blue-mid to-blue-900 flex items-center justify-center gap-2 text-white/60 font-body text-sm">
