@@ -1,49 +1,44 @@
 import Navbar   from '@/components/layout/Navbar'
 import Footer   from '@/components/layout/Footer'
 import Contacto from '@/components/sections/Contacto'
-import { NosotrosHero, Objetivos, Vision, Mision } from '@/components/sections/nosotros/NosotrosSections'
-import { getNosotrosImages } from '@/lib/supabase/images'
+import {
+  NosotrosHero,
+  Objetivos,
+  Vision,
+  Mision,
+} from '@/components/sections/nosotros/NosotrosSections'
+import { getNosotrosImages } from '@/lib/images'
 
 export const metadata = {
-  title: 'Nosotros — Mundo Fantástico',
-  description: 'Conoce nuestra misión, visión y objetivos.',
+  title: 'Nosotros',
+  description:
+    'Conoce nuestra misión, visión y objetivos. Más de 15 años formando niños felices en Bogotá.',
 }
 
-const EMPTY = { hero:null, objetivos:null, vision:null, mision:null, todas:[] }
-
-export default async function NosotrosPage() {
-  let images = EMPTY
-
-  try {
-    const result = await getNosotrosImages()
-    images = result ?? EMPTY
-    console.log('[nosotros] hero:',      images.hero?.name      ?? 'no encontrado')
-    console.log('[nosotros] objetivos:', images.objetivos?.name ?? 'no encontrado')
-    console.log('[nosotros] vision:',    images.vision?.name    ?? 'no encontrado')
-    console.log('[nosotros] mision:',    images.mision?.name    ?? 'no encontrado')
-  } catch (err) {
-    console.error('[nosotros] Error:', err.message)
-  }
+export default function NosotrosPage() {
+  // Fotos locales en /public/images/nosotros (placeholder si no existen)
+  const images = getNosotrosImages()
 
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <main className="pt-0">
-        {/* hero.png → fondo del título NOSOTROS */}
-        <NosotrosHero heroImage={images.hero}/>
+        {/* 1 ── Hero con parallax */}
+        <NosotrosHero heroImage={images.hero[0] ?? null} />
 
-        {/* objetivos.png → foto derecha de Objetivos */}
-        <Objetivos objetivosImg={images.objetivos}/>
+        {/* 2 ── Nuestros Objetivos */}
+        <Objetivos objetivoImages={images.objetivos} />
 
-        {/* vision.jpeg → fondo de la sección Visión */}
-        <Vision visionImg={images.vision}/>
+        {/* 3 ── Visión */}
+        <Vision visionImages={images.vision} />
 
-        {/* mision.jpeg → foto izquierda de Misión */}
-        <Mision misionImg={images.mision}/>
+        {/* 4 ── Misión */}
+        <Mision misionImages={images.mision} />
 
-        <Contacto/>
+        {/* 5 ── Formulario de contacto (igual que en Home) */}
+        <Contacto />
       </main>
-      <Footer/>
+      <Footer />
     </>
   )
 }

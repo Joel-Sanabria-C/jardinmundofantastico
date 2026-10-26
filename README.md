@@ -1,112 +1,83 @@
 # 🌟 Mundo Fantástico — Jardín Infantil
 
-Next.js 14 · React 18 · Tailwind CSS · Framer Motion · Supabase
+Next.js 14 · React 18 · Tailwind CSS · Framer Motion · Resend
 
 ---
 
 ## 🗂️ Páginas incluidas
 
-| Ruta        | Descripción                              |
-|-------------|------------------------------------------|
-| `/`         | Home: Hero, Niveles, Quiénes somos, Galería, Metodología, Contacto |
-| `/nosotros` | Nosotros: Hero parallax, Objetivos, Visión, Misión, Contacto |
+| Ruta           | Descripción |
+|----------------|-------------|
+| `/`            | Inicio: Hero, Niveles, Quiénes somos, Metodología (resumen), Contacto |
+| `/nosotros`    | Nosotros: Hero, Objetivos, Visión, Misión, Contacto |
+| `/servicios`   | Servicios: Hero, Niveles educativos, Qué incluye, Entorno seguro, Proceso de inscripción, Contacto |
+| `/metodologia` | Metodología: Hero, Enfoque, Pilares, Ciclo de aprendizaje, Un día en el jardín, Contacto |
 
-El botón **"Nosotros"** del Navbar y del Footer navega a `/nosotros`.
+> Esta versión **no usa Supabase** ni galería. Las fotos van en `public/images/`
+> y el formulario envía correos con **Resend**.
 
 ---
 
 ## 🚀 Instalación local
 
 ```bash
-# 1. Instalar dependencias
 npm install
-
-# 2. Copiar variables de entorno
-cp .env.local.example .env.local
-# → Edita .env.local con tus credenciales de Supabase
-
-# 3. Correr en desarrollo
-npm run dev
-# → http://localhost:3000
+cp .env.local.example .env.local   # → edita con tu clave de Resend
+npm run dev                         # → http://localhost:3000
 ```
 
 ---
 
-## 🗄️ Configurar Supabase (imágenes)
+## ✉️ Formulario de inscripción (Resend)
 
-### Paso 1 — Crear cuenta y proyecto
-1. Ve a [supabase.com](https://supabase.com) → **Start for free**
-2. Crea un nuevo proyecto (elige la región más cercana a Colombia)
-3. Espera ~2 minutos a que inicialice
+Al enviar el formulario, `/api/inscripciones`:
+1. Envía un correo al jardín (`CORREO_DESTINO`) con los datos y un botón para responder por WhatsApp.
+2. Envía una confirmación al acudiente si escribió su correo.
 
-### Paso 2 — Crear tablas y bucket
-1. En tu proyecto ve a **SQL Editor** → **New query**
-2. Copia y pega el contenido de `supabase/schema.sql`
-3. Haz clic en **Run** ✅
+Variables en `.env.local` (y en Vercel → Settings → Environment Variables):
 
-### Paso 3 — Subir imágenes
-1. Ve a **Storage** en el panel de Supabase
-2. Abre el bucket **imagenes** (ya creado por el SQL)
-3. Crea las carpetas y sube imágenes:
+| Variable | Valor |
+|----------|-------|
+| `RESEND_API_KEY`   | `re_...` (resend.com → API Keys) |
+| `CORREO_DESTINO`   | `mundofantasticojardininfantil@gmail.com` |
+| `CORREO_REMITENTE` | `onboarding@resend.dev` |
+
+⚠️ Con `onboarding@resend.dev`, Resend **solo entrega a la dirección con la que se creó la cuenta de Resend**.
+Por eso `CORREO_DESTINO` debe ser ese mismo correo. La confirmación al acudiente no llegará
+hasta verificar un dominio propio en Resend (resend.com → Domains) y cambiar `CORREO_REMITENTE`
+a algo como `inscripciones@tudominio.com`. El correo al jardín funciona igual.
+
+El formulario incluye un campo oculto anti-spam y validación de teléfono y correo.
+
+---
+
+## 🖼️ Fotos del sitio
+
+Copia las fotos con estos nombres exactos (jpg, jpeg, png o webp). Si un archivo
+no existe, se muestra el placeholder con emoji.
 
 ```
-imagenes/
-├── hero/          ← 1 foto del hero de la página Nosotros (ej: graduacion.jpg)
-├── objetivos/     ← 1-3 fotos de la sección Objetivos
-├── vision/        ← 1-2 fotos de la sección Visión
-├── mision/        ← 1-2 fotos de la sección Misión
-└── galeria/       ← 5-10 fotos para la galería del Home
+public/images/
+├── nosotros/hero.jpg        ← Hero de Nosotros
+├── nosotros/objetivos.jpg   ← Sección Objetivos
+├── nosotros/vision.jpg      ← Fondo de Visión
+├── nosotros/mision.jpg      ← Sección Misión
+├── metodologia/hero.jpg     ← Hero de Metodología
+├── metodologia/aula.jpg     ← Foto de "Nuestro enfoque"
+├── servicios/hero.jpg       ← Hero de Servicios
+└── servicios/instalaciones.jpg ← Foto de "Un entorno seguro"
 ```
 
-> 💡 **Tip**: Para crear carpetas en Supabase Storage, al subir un archivo escribe
-> `hero/mi-foto.jpg` como nombre — automáticamente crea la carpeta `hero/`.
-
-### Paso 4 — Obtener credenciales
-1. Ve a **Settings** → **API**
-2. Copia:
-   - `Project URL` → `NEXT_PUBLIC_SUPABASE_URL`
-   - `anon / public key` → `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-
-### Paso 5 — Configurar .env.local
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR...
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-```
-
-### Resultado esperado
-Cuando las imágenes estén en el bucket, el sitio las carga automáticamente.
-Sin imágenes, muestra placeholders con emojis (el sitio siempre funciona).
+Después de agregar fotos, vuelve a desplegar (o reinicia `npm run dev`).
 
 ---
 
 ## ☁️ Desplegar en Vercel
 
-### Paso 1 — Subir a GitHub/GitLab/Bitbucket
-```bash
-git init
-git add .
-git commit -m "feat: mundo fantastico inicial"
-git remote add origin https://github.com/TU_USUARIO/mundo-fantastico.git
-git push -u origin main
-```
-
-### Paso 2 — Importar en Vercel
-1. Ve a [vercel.com](https://vercel.com) → **Add New Project**
-2. Importa tu repositorio
-3. Framework: **Next.js** (detectado automáticamente)
-4. En **Environment Variables** agrega:
-
-| Key | Value |
-|-----|-------|
-| `NEXT_PUBLIC_SUPABASE_URL` | `https://tu-proyecto.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGci...` |
-| `NEXT_PUBLIC_SITE_URL` | `https://tu-dominio.vercel.app` |
-
-5. Haz clic en **Deploy** ✅
-
-### Paso 3 — Dominio personalizado (opcional)
-En Vercel → Settings → Domains → Agrega tu dominio.
+1. Sube el proyecto a GitHub.
+2. En [vercel.com](https://vercel.com) → **Add New Project** → importa el repositorio (Next.js se detecta solo).
+3. En **Environment Variables** agrega `RESEND_API_KEY`, `CORREO_DESTINO` y `CORREO_REMITENTE`.
+4. **Deploy** ✅
 
 ---
 
@@ -115,79 +86,19 @@ En Vercel → Settings → Domains → Agrega tu dominio.
 ```
 src/
 ├── app/
-│   ├── layout.js              ← Layout raíz (fuentes, metadata)
-│   ├── page.js                ← Página Home (/)
-│   ├── nosotros/
-│   │   └── page.js            ← Página Nosotros (/nosotros)
-│   └── api/
-│       └── inscripciones/
-│           └── route.js       ← API POST/GET inscripciones
+│   ├── layout.js                    ← Layout raíz (fuentes, metadata)
+│   ├── page.js                      ← Inicio (/)
+│   ├── nosotros/page.js             ← /nosotros
+│   ├── servicios/page.js            ← /servicios
+│   ├── metodologia/page.js          ← /metodologia
+│   └── api/inscripciones/route.js   ← Envío del formulario por correo
 ├── components/
-│   ├── layout/
-│   │   ├── Navbar.js          ← Navegación compartida
-│   │   └── Footer.js          ← Pie de página compartido
+│   ├── layout/        Navbar.js, Footer.js
 │   └── sections/
-│       ├── Hero.js            ← Hero animado (Home)
-│       ├── HomeSections.js    ← Niveles, QuienesSomos, Metodologia
-│       ├── Galeria.js         ← Galería con imágenes de Supabase
-│       ├── Contacto.js        ← Formulario compartido
-│       └── nosotros/
-│           └── NosotrosSections.js ← Hero, Objetivos, Vision, Mision
-├── lib/
-│   └── supabase/
-│       ├── client.js          ← Cliente browser
-│       ├── server.js          ← Cliente server (SSR)
-│       └── images.js          ← Helpers para leer Storage
-└── styles/
-    └── globals.css            ← Tailwind + estilos globales
-```
-
----
-
-## 🔌 Cómo agregar más páginas
-
-```bash
-# Ejemplo: crear página /servicios
-mkdir src/app/servicios
-```
-
-```jsx
-// src/app/servicios/page.js
-import Navbar   from '@/components/layout/Navbar'
-import Footer   from '@/components/layout/Footer'
-import Contacto from '@/components/sections/Contacto'
-
-export const metadata = { title: 'Servicios' }
-
-export default function ServiciosPage() {
-  return (
-    <>
-      <Navbar />
-      <main className="pt-16">
-        {/* Tu contenido aquí */}
-        <Contacto />
-      </main>
-      <Footer />
-    </>
-  )
-}
-```
-
-Luego agrega el link en `Navbar.js`:
-```js
-{ label: 'Servicios', href: '/servicios' },
-```
-
----
-
-## 🖼️ Reemplazar placeholders por imágenes reales
-
-En cualquier sección, cuando Supabase tiene imágenes, el componente las muestra
-automáticamente con `next/image`. Si no hay imágenes, aparece el placeholder.
-
-Para forzar una imagen local temporal:
-```jsx
-// En NosotrosSections.js, reemplaza ImgPlaceholder por:
-<Image src="/images/mi-foto.jpg" alt="..." fill className="object-cover" />
-// y pon la foto en /public/images/mi-foto.jpg
+│       ├── Hero.js, HomeSections.js, Contacto.js
+│       ├── nosotros/NosotrosSections.js
+│       ├── servicios/ServiciosSections.js
+│       └── metodologia/MetodologiaSections.js
+├── lib/               images.js, utils.js
+└── styles/globals.css
 ```

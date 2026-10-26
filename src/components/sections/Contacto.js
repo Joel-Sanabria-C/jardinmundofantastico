@@ -2,15 +2,14 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Send, MapPin, Phone, MessageCircle, Mail, CheckCircle, Loader2 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 
-const INIT = { nombre_nino:'', edad_nino:'', nombre_acudiente:'', telefono:'', correo:'', nivel_interes:'', mensaje:'' }
+const INIT = { nombre_nino:'', edad_nino:'', nombre_acudiente:'', telefono:'', correo:'', nivel_interes:'', mensaje:'', sitio_web:'' }
 const NIVELES = ['Párvulos (1°)','Transición (2°)','Transición (3°)','Transición (4°)','Transición (5°)']
 const INFO = [
-  { icon:<MapPin size={18}/>,       label:'Dirección',  value:'Calle 142A #141D - 15  Ciudadela Cafam II Superlote 6 Salón comunal', color:'#D32F2F' },
-  { icon:<Phone size={18}/>,        label:'Teléfono',   value:'+573203017208',  color:'#FFD600' },
-  { icon:<MessageCircle size={18}/>, label:'WhatsApp',  value:'+573203017208',  color:'#25D366' },
-  { icon:<Mail size={18}/>,         label:'Email',      value:'jardininfantil@gmail.com',    color:'#2196F3' },
+  { icon:<MapPin size={18}/>,       label:'Dirección',  value:'Calle 142A #14J0-15, Ciudadela Cafam II Superlote 6', color:'#D32F2F' },
+  { icon:<Phone size={18}/>,        label:'Teléfono',   value:'+57 320 3017208',  color:'#FFD600' },
+  { icon:<MessageCircle size={18}/>, label:'WhatsApp',  value:'320 3017208',  color:'#25D366' },
+  { icon:<Mail size={18}/>,         label:'Email',      value:'mundofantasticojardininfantil@gmail.com', color:'#2196F3' },
 ]
 
 export default function Contacto() {
@@ -25,13 +24,13 @@ export default function Contacto() {
     setStatus('loading')
     setErrMsg('')
     try {
-      // ── Con Supabase real: descomenta esto ──
-      // const sb = createClient()
-      // const { error } = await sb.from('inscripciones').insert([form])
-      // if (error) throw error
-
-      // ── Sin Supabase: simulación ─────────────
-      await new Promise(r => setTimeout(r, 1200))
+      const res  = await fetch('/api/inscripciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok || !data.success) throw new Error(data.error || 'Error al enviar. Intenta de nuevo.')
       setStatus('success')
       setForm(INIT)
     } catch(err) {
@@ -70,6 +69,8 @@ export default function Contacto() {
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {/* Campo trampa anti-spam: invisible para personas */}
+                <input type="text" name="sitio_web" value={form.sitio_web} onChange={handleChange} tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden"/>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className={lbl}>Nombre del niño/a</label><input className="input-mf" name="nombre_nino" value={form.nombre_nino} onChange={handleChange} placeholder="Nombre del niño" required/></div>
                   <div><label className={lbl}>Edad del niño/a</label><input className="input-mf" name="edad_nino" value={form.edad_nino} onChange={handleChange} placeholder="Ej. 3 años"/></div>
@@ -81,7 +82,7 @@ export default function Contacto() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div><label className={lbl}>Correo electrónico</label><input className="input-mf" name="correo" type="email" value={form.correo} onChange={handleChange} placeholder="correo@ejemplo.com"/></div>
                   <div><label className={lbl}>Nivel de interés</label>
-                    <select className="input-mf" name="nivel_interes" value={form.nivel_interes} onChange={handleChange}>
+                    <select className="input-mf [&>option]:text-gray-900" name="nivel_interes" value={form.nivel_interes} onChange={handleChange}>
                       <option value="">Selecciona un nivel</option>
                       {NIVELES.map(n => <option key={n} value={n}>{n}</option>)}
                     </select>
@@ -107,11 +108,19 @@ export default function Contacto() {
                   <motion.div key={i} className="flex items-start gap-3 pb-4 border-b border-white/10 last:border-0 last:pb-0"
                     initial={{ opacity:0, y:14 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ delay:0.2+i*0.1 }}>
                     <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background:`${item.color}33`, color:item.color }}>{item.icon}</div>
-                    <div><p className="font-body text-white text-sm font-bold mb-0.5">{item.label}</p><p className="font-body text-white/55 text-xs">{item.value}</p></div>
+                    <div><p className="font-body text-white text-sm font-bold mb-0.5">{item.label}</p><p className="font-body text-white/55 text-xs [overflow-wrap:anywhere]">{item.value}</p></div>
                   </motion.div>
                 ))}
               </div>
-              
+              <div className="flex gap-2 mt-5">
+                {[{label:'Instagram',emoji:'📸',cls:'bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888]'},
+                  {label:'Facebook', emoji:'👍', cls:'bg-[#1877F2]'},
+                  {label:'WhatsApp', emoji:'💬', cls:'bg-[#25D366]'}].map(s => (
+                  <motion.a key={s.label} href="#" className={`${s.cls} text-white text-xs rounded-xl px-3 py-2 font-body font-bold flex items-center gap-1`} whileHover={{ scale:1.05, y:-2 }}>
+                    <span>{s.emoji}</span><span>{s.label}</span>
+                  </motion.a>
+                ))}
+              </div>
             </div>
             <div className="bg-white/8 border border-white/15 rounded-3xl overflow-hidden">
               <div className="h-36 bg-gradient-to-br from-brand-blue-mid to-blue-900 flex items-center justify-center gap-2 text-white/60 font-body text-sm">

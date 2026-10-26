@@ -4,12 +4,12 @@
 
 @layer base {
   :root {
-    --font-fredoka: 'Fredoka One';
+    --font-fredoka: 'Fredoka';
     --font-nunito:  'Nunito';
   }
   html  { scroll-behavior: smooth; }
   body  { @apply font-body antialiased overflow-x-hidden bg-white; }
-  h1,h2,h3,h4 { @apply font-display; }
+  h1,h2,h3,h4 { @apply font-display; font-weight: 600; }
 }
 
 @layer components {
